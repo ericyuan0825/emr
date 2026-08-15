@@ -1,1 +1,1277 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>Personal Health Passport</title>
+
+    <style>
+        /* =========================
+           基本設定
+        ========================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #1976d2;
+            --primary-dark: #0d47a1;
+            --secondary: #4fc3f7;
+            --light-blue: #e3f2fd;
+            --very-light-blue: #f6fbff;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --text: #1f2937;
+            --gray: #64748b;
+            --border: #dbeafe;
+            --danger: #e53935;
+            --success: #16a085;
+        }
+
+        body {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                "Microsoft JhengHei",
+                "Noto Sans TC",
+                "Noto Sans JP",
+                "Noto Sans KR",
+                Arial,
+                sans-serif;
+
+            background:
+                radial-gradient(circle at top left, #dff3ff 0%, transparent 30%),
+                linear-gradient(135deg, #f4fbff, #e8f6ff);
+
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* =========================
+           頂部
+        ========================= */
+        header {
+            background: linear-gradient(
+                135deg,
+                var(--primary-dark),
+                var(--primary),
+                var(--secondary)
+            );
+
+            color: white;
+            padding: 22px 7%;
+            box-shadow: 0 4px 20px rgba(25, 118, 210, 0.2);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: auto;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo {
+            width: 52px;
+            height: 52px;
+
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 16px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 28px;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand h1 {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .brand p {
+            font-size: 13px;
+            opacity: 0.85;
+        }
+
+        /* =========================
+           語言選單
+        ========================= */
+        .language-box select {
+            border: none;
+            border-radius: 10px;
+
+            padding: 10px 14px;
+            font-size: 14px;
+
+            background: white;
+            color: var(--primary-dark);
+
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* =========================
+           主內容
+        ========================= */
+        main {
+            max-width: 1200px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        /* =========================
+           個人資訊卡
+        ========================= */
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(219, 234, 254, 0.9);
+
+            border-radius: 24px;
+            padding: 28px;
+
+            display: flex;
+            gap: 25px;
+            align-items: center;
+
+            box-shadow: 0 12px 35px rgba(30, 136, 229, 0.08);
+            margin-bottom: 24px;
+
+            backdrop-filter: blur(10px);
+        }
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            min-width: 110px;
+
+            border-radius: 50%;
+
+            background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--secondary)
+            );
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: white;
+            font-size: 42px;
+
+            box-shadow: 0 10px 25px rgba(25, 118, 210, 0.2);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h2 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .profile-subtitle {
+            color: var(--gray);
+            margin-bottom: 18px;
+        }
+
+        .info-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            padding: 8px 12px;
+
+            background: var(--light-blue);
+            color: var(--primary-dark);
+
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* =========================
+           緊急資訊
+        ========================= */
+        .emergency {
+            background: linear-gradient(
+                135deg,
+                #fff5f5,
+                #ffffff
+            );
+
+            border-left: 5px solid var(--danger);
+            border-radius: 18px;
+
+            padding: 22px;
+            margin-bottom: 24px;
+
+            box-shadow: 0 8px 25px rgba(229, 57, 53, 0.06);
+        }
+
+        .emergency h2 {
+            color: var(--danger);
+            margin-bottom: 10px;
+        }
+
+        .emergency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        /* =========================
+           卡片網格
+        ========================= */
+        .grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fit, minmax(330px, 1fr));
+
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+
+            border: 1px solid var(--border);
+            border-radius: 20px;
+
+            padding: 24px;
+
+            box-shadow: 0 10px 30px rgba(30, 136, 229, 0.06);
+
+            transition: 0.25s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 35px rgba(30, 136, 229, 0.12);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--primary-dark);
+
+            margin-bottom: 18px;
+            padding-bottom: 14px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title .icon {
+            width: 40px;
+            height: 40px;
+
+            background: var(--light-blue);
+            border-radius: 12px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-size: 20px;
+        }
+
+        .card-title h3 {
+            font-size: 18px;
+        }
+
+        /* =========================
+           資料列表
+        ========================= */
+        .data-list {
+            list-style: none;
+        }
+
+        .data-list li {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+
+            padding: 11px 0;
+            border-bottom: 1px solid #edf5fb;
+        }
+
+        .data-list li:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .value {
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* =========================
+           歷史紀錄
+        ========================= */
+        .history-item {
+            padding: 15px;
+
+            background: var(--very-light-blue);
+            border-radius: 14px;
+
+            margin-bottom: 12px;
+
+            border-left: 4px solid var(--secondary);
+        }
+
+        .history-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .history-date {
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: bold;
+
+            margin-bottom: 5px;
+        }
+
+        .history-text {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* =========================
+           底部
+        ========================= */
+        footer {
+            text-align: center;
+            padding: 35px 20px;
+
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .updated {
+            margin-top: 8px;
+            color: var(--primary);
+        }
+
+        /* =========================
+           手機版
+        ========================= */
+        @media (max-width: 700px) {
+
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .profile-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .info-tags {
+                justify-content: center;
+            }
+
+            .data-list li {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .value {
+                text-align: left;
+            }
+
+            .brand h1 {
+                font-size: 20px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         Header
+    ========================== -->
+    <header>
+
+        <div class="header-container">
+
+            <div class="brand">
+
+                <div class="logo">
+                    ❤
+                </div>
+
+                <div>
+                    <h1 data-i18n="title">
+                        個人健康護照
+                    </h1>
+
+                    <p data-i18n="subtitle">
+                        Personal Health Passport
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="language-box">
+
+                <select id="languageSelect"
+                        onchange="changeLanguage()">
+
+                    <option value="zh">繁體中文</option>
+                    <option value="en">English</option>
+                    <option value="ja">日本語</option>
+                    <option value="ko">한국어</option>
+                    <option value="de">Deutsch</option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- =========================
+             個人資料
+        ========================== -->
+        <section class="profile-card">
+
+            <div class="avatar">
+                👤
+            </div>
+
+            <div class="profile-info">
+
+                <!-- 請自行修改 -->
+                <h2>你的名字</h2>
+
+                <p class="profile-subtitle"
+                   data-i18n="profileDescription">
+
+                    隨身攜帶的重要個人健康資訊
+                </p>
+
+                <div class="info-tags">
+
+                    <span class="tag">
+                        🩸 <span data-i18n="bloodType">
+                            血型
+                        </span>: O+
+                    </span>
+
+                    <span class="tag">
+                        🌏 Taiwan
+                    </span>
+
+                    <span class="tag">
+                        📅 200X / XX / XX
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             緊急資訊
+        ========================== -->
+        <section class="emergency">
+
+            <h2>
+                🚨 <span data-i18n="emergency">
+                    緊急醫療資訊
+                </span>
+            </h2>
+
+            <div class="emergency-grid">
+
+                <div>
+                    <strong data-i18n="emergencyContact">
+                        緊急聯絡人
+                    </strong>
+
+                    <p>請填寫姓名</p>
+                </div>
+
+                <div>
+                    <strong data-i18n="phone">
+                        電話
+                    </strong>
+
+                    <p>請填寫電話</p>
+                </div>
+
+                <div>
+                    <strong data-i18n="criticalAllergy">
+                        重要過敏
+                    </strong>
+
+                    <p>None / 無</p>
+                </div>
+
+                <div>
+                    <strong data-i18n="criticalCondition">
+                        重要疾病
+                    </strong>
+
+                    <p>None / 無</p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             所有健康資料
+        ========================== -->
+        <div class="grid">
+
+
+            <!-- 個人基本資料 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">👤</div>
+
+                    <h3 data-i18n="personalInfo">
+                        個人基本資料
+                    </h3>
+
+                </div>
+
+                <ul class="data-list">
+
+                    <li>
+                        <span class="label"
+                              data-i18n="gender">
+                            性別
+                        </span>
+
+                        <span class="value">請填寫</span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="birthDate">
+                            出生日期
+                        </span>
+
+                        <span class="value">
+                            200X / XX / XX
+                        </span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="nationality">
+                            國籍
+                        </span>
+
+                        <span class="value">
+                            Taiwan
+                        </span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="bloodType">
+                            血型
+                        </span>
+
+                        <span class="value">O+</span>
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <!-- 過敏史 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">⚠️</div>
+
+                    <h3 data-i18n="allergies">
+                        過敏史
+                    </h3>
+
+                </div>
+
+                <div class="history-item">
+
+                    <div class="history-date">
+                        Medication / Food / Environment
+                    </div>
+
+                    <div class="history-text"
+                         data-i18n="noAllergy">
+
+                        目前無已知重大過敏。
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 疾病史 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">🏥</div>
+
+                    <h3 data-i18n="medicalHistory">
+                        疾病史
+                    </h3>
+
+                </div>
+
+                <div class="history-item">
+
+                    <div class="history-date">
+                        YYYY / MM
+                    </div>
+
+                    <div class="history-text">
+                        請填寫疾病名稱、診斷時間與目前狀態。
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 家族病史 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">👨‍👩‍👧‍👦</div>
+
+                    <h3 data-i18n="familyHistory">
+                        家族病史
+                    </h3>
+
+                </div>
+
+                <ul class="data-list">
+
+                    <li>
+                        <span class="label"
+                              data-i18n="father">
+                            父親
+                        </span>
+
+                        <span class="value">請填寫</span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="mother">
+                            母親
+                        </span>
+
+                        <span class="value">請填寫</span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="siblings">
+                            兄弟姊妹
+                        </span>
+
+                        <span class="value">請填寫</span>
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <!-- 手術史 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">🩺</div>
+
+                    <h3 data-i18n="surgicalHistory">
+                        手術史
+                    </h3>
+
+                </div>
+
+                <div class="history-item">
+
+                    <div class="history-date">
+                        YYYY / MM / DD
+                    </div>
+
+                    <div class="history-text">
+                        請填寫手術名稱與相關資訊。
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 用藥史 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">💊</div>
+
+                    <h3 data-i18n="medicationHistory">
+                        用藥史
+                    </h3>
+
+                </div>
+
+                <ul class="data-list">
+
+                    <li>
+                        <span class="label"
+                              data-i18n="currentMedication">
+                            目前用藥
+                        </span>
+
+                        <span class="value">
+                            None / 無
+                        </span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="pastMedication">
+                            過去重要用藥
+                        </span>
+
+                        <span class="value">
+                            None / 無
+                        </span>
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <!-- 疫苗紀錄 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">💉</div>
+
+                    <h3 data-i18n="vaccination">
+                        疫苗紀錄
+                    </h3>
+
+                </div>
+
+                <div class="history-item">
+
+                    <div class="history-date">
+                        YYYY / MM / DD
+                    </div>
+
+                    <div class="history-text">
+                        請填寫疫苗名稱、接種日期與劑次。
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- 健康指標 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">❤️</div>
+
+                    <h3 data-i18n="healthMetrics">
+                        重要健康資訊
+                    </h3>
+
+                </div>
+
+                <ul class="data-list">
+
+                    <li>
+                        <span class="label"
+                              data-i18n="height">
+                            身高
+                        </span>
+
+                        <span class="value">-- cm</span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="weight">
+                            體重
+                        </span>
+
+                        <span class="value">-- kg</span>
+                    </li>
+
+                    <li>
+                        <span class="label"
+                              data-i18n="bloodPressure">
+                            血壓
+                        </span>
+
+                        <span class="value">-- / --</span>
+                    </li>
+
+                </ul>
+
+            </section>
+
+
+            <!-- 其他重要資訊 -->
+            <section class="card">
+
+                <div class="card-title">
+
+                    <div class="icon">📋</div>
+
+                    <h3 data-i18n="otherInformation">
+                        其他重要醫療資訊
+                    </h3>
+
+                </div>
+
+                <div class="history-item">
+
+                    <div class="history-text"
+                         data-i18n="otherPlaceholder">
+
+                        可記錄住院史、慢性疾病、醫療注意事項、
+                        特殊照護需求或其他重要資訊。
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         Footer
+    ========================== -->
+    <footer>
+
+        <p data-i18n="privacy">
+            此頁面包含個人健康資訊，請妥善保護資料安全。
+        </p>
+
+        <p class="updated">
+            <span data-i18n="lastUpdated">
+                最後更新
+            </span>:
+            <span id="lastUpdated"></span>
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         JavaScript 多國語言
+    ========================== -->
+    <script>
+
+        const translations = {
+
+            zh: {
+                title: "個人健康護照",
+                subtitle: "Personal Health Passport",
+                profileDescription: "隨身攜帶的重要個人健康資訊",
+
+                bloodType: "血型",
+
+                emergency: "緊急醫療資訊",
+                emergencyContact: "緊急聯絡人",
+                phone: "電話",
+                criticalAllergy: "重要過敏",
+                criticalCondition: "重要疾病",
+
+                personalInfo: "個人基本資料",
+                gender: "性別",
+                birthDate: "出生日期",
+                nationality: "國籍",
+
+                allergies: "過敏史",
+                noAllergy: "目前無已知重大過敏。",
+
+                medicalHistory: "疾病史",
+                familyHistory: "家族病史",
+
+                father: "父親",
+                mother: "母親",
+                siblings: "兄弟姊妹",
+
+                surgicalHistory: "手術史",
+                medicationHistory: "用藥史",
+
+                currentMedication: "目前用藥",
+                pastMedication: "過去重要用藥",
+
+                vaccination: "疫苗紀錄",
+
+                healthMetrics: "重要健康資訊",
+                height: "身高",
+                weight: "體重",
+                bloodPressure: "血壓",
+
+                otherInformation: "其他重要醫療資訊",
+
+                otherPlaceholder:
+                    "可記錄住院史、慢性疾病、醫療注意事項、特殊照護需求或其他重要資訊。",
+
+                privacy:
+                    "此頁面包含個人健康資訊，請妥善保護資料安全。",
+
+                lastUpdated: "最後更新"
+            },
+
+
+            en: {
+                title: "Personal Health Passport",
+                subtitle: "Personal Health Information",
+
+                profileDescription:
+                    "Important personal health information for travel and emergencies.",
+
+                bloodType: "Blood Type",
+
+                emergency: "Emergency Medical Information",
+                emergencyContact: "Emergency Contact",
+                phone: "Phone",
+                criticalAllergy: "Critical Allergies",
+                criticalCondition: "Critical Conditions",
+
+                personalInfo: "Personal Information",
+                gender: "Gender",
+                birthDate: "Date of Birth",
+                nationality: "Nationality",
+
+                allergies: "Allergy History",
+                noAllergy: "No known major allergies.",
+
+                medicalHistory: "Medical History",
+                familyHistory: "Family Medical History",
+
+                father: "Father",
+                mother: "Mother",
+                siblings: "Siblings",
+
+                surgicalHistory: "Surgical History",
+                medicationHistory: "Medication History",
+
+                currentMedication: "Current Medication",
+                pastMedication: "Past Important Medication",
+
+                vaccination: "Vaccination Records",
+
+                healthMetrics: "Important Health Information",
+                height: "Height",
+                weight: "Weight",
+                bloodPressure: "Blood Pressure",
+
+                otherInformation:
+                    "Other Important Medical Information",
+
+                otherPlaceholder:
+                    "Record hospitalizations, chronic conditions, medical precautions, special care needs, or other important information.",
+
+                privacy:
+                    "This page contains personal health information. Please protect your data and privacy.",
+
+                lastUpdated: "Last Updated"
+            },
+
+
+            ja: {
+                title: "個人健康パスポート",
+                subtitle: "Personal Health Passport",
+
+                profileDescription:
+                    "緊急時や海外旅行で役立つ重要な健康情報",
+
+                bloodType: "血液型",
+
+                emergency: "緊急医療情報",
+                emergencyContact: "緊急連絡先",
+                phone: "電話番号",
+                criticalAllergy: "重要なアレルギー",
+                criticalCondition: "重要な疾患",
+
+                personalInfo: "基本情報",
+                gender: "性別",
+                birthDate: "生年月日",
+                nationality: "国籍",
+
+                allergies: "アレルギー歴",
+                noAllergy: "現在、重大な既知のアレルギーはありません。",
+
+                medicalHistory: "病歴",
+                familyHistory: "家族歴",
+
+                father: "父",
+                mother: "母",
+                siblings: "兄弟姉妹",
+
+                surgicalHistory: "手術歴",
+                medicationHistory: "服薬歴",
+
+                currentMedication: "現在の服薬",
+                pastMedication: "過去の重要な薬",
+
+                vaccination: "予防接種記録",
+
+                healthMetrics: "重要な健康情報",
+                height: "身長",
+                weight: "体重",
+                bloodPressure: "血圧",
+
+                otherInformation:
+                    "その他の重要な医療情報",
+
+                otherPlaceholder:
+                    "入院歴、慢性疾患、医療上の注意事項、特別なケアなどを記録できます。",
+
+                privacy:
+                    "このページには個人の健康情報が含まれています。適切に保護してください。",
+
+                lastUpdated: "最終更新"
+            },
+
+
+            ko: {
+                title: "개인 건강 여권",
+                subtitle: "Personal Health Passport",
+
+                profileDescription:
+                    "여행과 응급 상황을 위한 중요한 개인 건강 정보",
+
+                bloodType: "혈액형",
+
+                emergency: "응급 의료 정보",
+                emergencyContact: "비상 연락처",
+                phone: "전화번호",
+                criticalAllergy: "중요 알레르기",
+                criticalCondition: "중요 질환",
+
+                personalInfo: "개인 기본 정보",
+                gender: "성별",
+                birthDate: "생년월일",
+                nationality: "국적",
+
+                allergies: "알레르기 병력",
+                noAllergy: "현재 알려진 주요 알레르기가 없습니다.",
+
+                medicalHistory: "질병 병력",
+                familyHistory: "가족 병력",
+
+                father: "아버지",
+                mother: "어머니",
+                siblings: "형제자매",
+
+                surgicalHistory: "수술 병력",
+                medicationHistory: "약물 복용 이력",
+
+                currentMedication: "현재 복용 약물",
+                pastMedication: "과거 주요 약물",
+
+                vaccination: "예방 접종 기록",
+
+                healthMetrics: "중요 건강 정보",
+                height: "키",
+                weight: "체중",
+                bloodPressure: "혈압",
+
+                otherInformation:
+                    "기타 중요한 의료 정보",
+
+                otherPlaceholder:
+                    "입원 기록, 만성 질환, 의료 주의사항 및 기타 중요한 정보를 기록할 수 있습니다.",
+
+                privacy:
+                    "이 페이지에는 개인 건강 정보가 포함되어 있습니다. 개인정보를 안전하게 보호하세요.",
+
+                lastUpdated: "마지막 업데이트"
+            },
+
+
+            de: {
+                title: "Persönlicher Gesundheitspass",
+                subtitle: "Personal Health Passport",
+
+                profileDescription:
+                    "Wichtige persönliche Gesundheitsinformationen für Reisen und Notfälle.",
+
+                bloodType: "Blutgruppe",
+
+                emergency: "Medizinische Notfallinformationen",
+                emergencyContact: "Notfallkontakt",
+                phone: "Telefon",
+                criticalAllergy: "Wichtige Allergien",
+                criticalCondition: "Wichtige Erkrankungen",
+
+                personalInfo: "Persönliche Informationen",
+                gender: "Geschlecht",
+                birthDate: "Geburtsdatum",
+                nationality: "Staatsangehörigkeit",
+
+                allergies: "Allergiegeschichte",
+                noAllergy: "Keine bekannten schweren Allergien.",
+
+                medicalHistory: "Krankengeschichte",
+                familyHistory: "Familienanamnese",
+
+                father: "Vater",
+                mother: "Mutter",
+                siblings: "Geschwister",
+
+                surgicalHistory: "Operationsgeschichte",
+                medicationHistory: "Medikamentengeschichte",
+
+                currentMedication: "Aktuelle Medikamente",
+                pastMedication: "Frühere wichtige Medikamente",
+
+                vaccination: "Impfungen",
+
+                healthMetrics: "Wichtige Gesundheitsinformationen",
+                height: "Größe",
+                weight: "Gewicht",
+                bloodPressure: "Blutdruck",
+
+                otherInformation:
+                    "Weitere wichtige medizinische Informationen",
+
+                otherPlaceholder:
+                    "Hier können Krankenhausaufenthalte, chronische Krankheiten und andere wichtige medizinische Informationen eingetragen werden.",
+
+                privacy:
+                    "Diese Seite enthält persönliche Gesundheitsinformationen. Bitte schützen Sie Ihre Daten.",
+
+                lastUpdated: "Zuletzt aktualisiert"
+            }
+
+        };
+
+
+        /* =========================
+           切換語言
+        ========================== */
+        function changeLanguage() {
+
+            const language =
+                document.getElementById("languageSelect").value;
+
+            document.documentElement.lang = language;
+
+            document.querySelectorAll("[data-i18n]")
+                .forEach(element => {
+
+                    const key =
+                        element.getAttribute("data-i18n");
+
+                    if (
+                        translations[language] &&
+                        translations[language][key]
+                    ) {
+                        element.textContent =
+                            translations[language][key];
+                    }
+
+                });
+
+            /* 記住使用者選擇的語言 */
+            localStorage.setItem(
+                "healthPassportLanguage",
+                language
+            );
+        }
+
+
+        /* =========================
+           自動讀取上次選擇的語言
+        ========================== */
+        window.addEventListener("DOMContentLoaded", () => {
+
+            const savedLanguage =
+                localStorage.getItem(
+                    "healthPassportLanguage"
+                );
+
+            if (savedLanguage) {
+
+                document.getElementById(
+                    "languageSelect"
+                ).value = savedLanguage;
+
+                changeLanguage();
+            }
+
+            /* 最後更新日期 */
+            const today = new Date();
+
+            document.getElementById(
+                "lastUpdated"
+            ).textContent =
+                today.toLocaleDateString();
+
+        });
+
+    </script>
+
+</body>
+</html>
